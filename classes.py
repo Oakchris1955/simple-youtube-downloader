@@ -78,7 +78,7 @@ class Video:
 		if self.status == 'Q':
 			functions.insert_to_err_logger(self.UI.err_logger, 'Please wait until enough info are gathered')
 		elif self.status in ['B', 'D']:
-			functions.insert_to_err_logger(self.UI.err_logger, 'Download has began, pleasse wait for it to finish')
+			functions.insert_to_err_logger(self.UI.err_logger, 'Download has began, please wait for it to finish')
 		elif self.status == 'O':
 			functions.insert_to_err_logger(self.UI.err_logger, 'This video is already downloaded')
 		# and don't forget to stop function if not ready to begin downloading
