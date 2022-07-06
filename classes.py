@@ -75,7 +75,7 @@ class Video:
 
 	def start_downloading(self) -> None:
 		# check if status is fine to begin downloading
-		if self.status == 'Q':
+		if self.status == 'G':
 			functions.insert_to_err_logger(self.UI.err_logger, 'Please wait until enough info are gathered')
 		elif self.status in ['B', 'D']:
 			functions.insert_to_err_logger(self.UI.err_logger, 'Download has began, please wait for it to finish')
