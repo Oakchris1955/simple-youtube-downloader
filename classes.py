@@ -33,6 +33,8 @@ class Video:
 		self.UI = UI
 		self.url = url
 		self.options = options
+		# this variable used to be below self.percent = "?" in self.start_downloading, but because of a bug was moved here
+		self.downloaded_formats = []
 
 		# also, add _download_progress_hook to progrss hooks
 		self.options["progress_hooks"].append(self._download_progress_hook)
@@ -89,7 +91,6 @@ class Video:
 		self._update_status(self.UI.tree, "B")
 		# also, set some variables
 		self.percent = "?"
-		self._downloaded_formats = []
 		with yt_dlp.YoutubeDL(self.options) as ydl:
 			self._update_status(self.UI.tree, "D")
 			ydl.download(self.url)
@@ -122,12 +123,12 @@ class Video:
 			current_type = 'video'
 
 		current_format = info['info_dict']['format_id']
-		if current_format not in [frmt for frmt in self._downloaded_formats]:
-			self._downloaded_formats.append(current_format)
+		if current_format not in [frmt for frmt in self.downloaded_formats]:
+			self.downloaded_formats.append(current_format)
 
 		if info["status"] == "downloading":
 			# update the downloaded bytes
-			total_downloaded_bytes = self._get_total_formats_size(self._downloaded_formats[:-1])+info['downloaded_bytes']
+			total_downloaded_bytes = self._get_total_formats_size(self.downloaded_formats[:-1])+info['downloaded_bytes']
 			# also, update percent downloaded
 			self.percent = round(total_downloaded_bytes/self.total_size*100, 2)
 		
