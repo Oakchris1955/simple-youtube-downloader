@@ -59,7 +59,7 @@ class Video:
 		else:
 			# also, save some important data
 			self.title = self.video_info["title"]
-			self.total_size = self.video_info['filesize_approx']
+			self.total_size = self._get_total_formats_size(frmt['format_id'] for frmt in self.video_info['requested_formats'])
 			self.human_total_size = self._humansize(self.total_size)
 			# change video status
 			self.status = "Q"
