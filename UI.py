@@ -11,6 +11,15 @@ import functions, classes, variables
 
 root = tk.Tk()
 root.resizable(False, False) 
+
+menubar = tk.Menu(root)
+
+optionsmenu = tk.Menu(menubar, tearoff=0)
+optionsmenu.add_command(label="Change download location", command=functions.change_download_dir)
+optionsmenu.add_command(label="Show download location", command=lambda:tk.messagebox.showinfo(title="Download location", message=variables.out_dir or variables.default_out_dir))
+menubar.add_cascade(label="Options", menu=optionsmenu)
+
+root.config(menu=menubar)
 '''
 root.grid_rowconfigure(0, weight=1)
 root.grid_rowconfigure(1, weight=1)

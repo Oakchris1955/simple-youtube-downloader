@@ -15,7 +15,7 @@ import functions, variables
 class Video:
 	default_options = {
 		# downloads folder path
-		'outtmpl': str(os.path.join(os.getenv('USERPROFILE'), 'Downloads'))+'/'+'%(title)s.%(ext)s',
+		'outtmpl': '%(title)s.%(ext)s',
 		'progress_hooks': [],
 		'format': 'bestaudio+bestvideo',
 	} 
@@ -33,6 +33,7 @@ class Video:
 		self.UI = UI
 		self.url = url
 		self.options = options
+		self.output_dir = variables.out_dir
 		# this variable used to be below self.percent = "?" in self.start_downloading, but because of a bug was moved here
 		self.downloaded_formats = []
 
@@ -87,11 +88,16 @@ class Video:
 		if self.status != 'Q':
 			return None
 
+		# create a temporary copy of self.options
+		options = self.options.copy()
+		print(self.output_dir)
+		options['outtmpl'] = (self.output_dir or variables.default_out_dir) + '/' + options['outtmpl']
+
 		# update status
 		self._update_status(self.UI.tree, "B")
 		# also, set some variables
 		self.percent = "?"
-		with yt_dlp.YoutubeDL(self.options) as ydl:
+		with yt_dlp.YoutubeDL(options) as ydl:
 			self._update_status(self.UI.tree, "D")
 			ydl.download(self.url)
 			# once done with downloading, change status and update one last time

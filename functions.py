@@ -1,8 +1,11 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import filedialog
 import asyncio
 
 import classes
+
+import variables
 
 def insert_to_err_logger(logger: tk.Text, text: str) -> None:
 	logger.configure(state=tk.NORMAL)
@@ -31,6 +34,11 @@ def start_downloading(videos: list, tree: ttk.Treeview) -> None:
 	if my_vid:
 		my_vid.start_downloading()
 	
+def change_download_dir():
+	download_location = filedialog.askdirectory()
+	for video in variables.videos:
+		video.output_dir = download_location
+		print(video.output_dir)
 
 def temp_change_button_text(button: tk.Button, text: str, time: int, root: tk.Tk) -> None:
 	'''Unused function'''
