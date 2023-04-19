@@ -19,6 +19,13 @@ optionsmenu.add_command(label="Change download location", command=functions.chan
 optionsmenu.add_command(label="Show download location", command=lambda:tk.messagebox.showinfo(title="Download location", message=variables.out_dir or variables.default_out_dir))
 menubar.add_cascade(label="Options", menu=optionsmenu)
 
+formatmenu = tk.Menu(menubar, tearoff=0)
+formatmenu.add_radiobutton(label='Audio only', underline=0, command=lambda:functions.change_download_format("bestaudio"))
+formatmenu.add_radiobutton(label='Video only', underline=0, command=lambda:functions.change_download_format("bestvideo"))
+formatmenu.add_radiobutton(label='Audio and video', underline=0, command=lambda:functions.change_download_format("bestaudio+bestvideo"))
+formatmenu.invoke('Audio and video')
+menubar.add_cascade(label='Select format', menu=formatmenu)
+
 root.config(menu=menubar)
 '''
 root.grid_rowconfigure(0, weight=1)

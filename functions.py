@@ -33,12 +33,15 @@ def start_downloading(videos: list, tree: ttk.Treeview) -> None:
 	# if found something, then start downloading
 	if my_vid:
 		my_vid.start_downloading()
-	
+
+def change_download_format(video_format: str):
+	variables.download_format = video_format
+
 def change_download_dir():
 	download_location = filedialog.askdirectory()
+	variables.out_dir = download_location
 	for video in variables.videos:
 		video.output_dir = download_location
-		print(video.output_dir)
 
 def temp_change_button_text(button: tk.Button, text: str, time: int, root: tk.Tk) -> None:
 	'''Unused function'''

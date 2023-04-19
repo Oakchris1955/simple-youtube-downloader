@@ -16,8 +16,7 @@ class Video:
 	default_options = {
 		# downloads folder path
 		'outtmpl': '%(title)s.%(ext)s',
-		'progress_hooks': [],
-		'format': 'bestaudio+bestvideo',
+		'progress_hooks': []
 	} 
 	status_dict = {
 		"G": "Gathering info...",
@@ -60,7 +59,7 @@ class Video:
 		else:
 			# also, save some important data
 			self.title = self.video_info["title"]
-			self.total_size = self._get_total_formats_size(frmt['format_id'] for frmt in self.video_info['requested_formats'])
+			self.total_size = self._get_total_formats_size(frmt['format_id'] for frmt in self.video_info['requested_downloads'])
 			self.human_total_size = self._humansize(self.total_size)
 			# change video status
 			self.status = "Q"
@@ -68,12 +67,13 @@ class Video:
 			self.add_to_queue(self.UI.tree)
 			# and save the requested formats
 			save_order = [0, 1]
-			self.requested_formats = self.video_info["requested_formats"]
-			if self.requested_formats[1]["fps"]:
-				save_order.reverse()
-			# unused variables
-			self.best_video = self.requested_formats[save_order[0]]
-			self.best_audio = self.requested_formats[save_order[1]]
+			self.requested_formats = self.video_info["requested_downloads"]
+			if len(self.requested_formats) != 1:
+				if self.requested_formats[1]["fps"]:
+					save_order.reverse()
+				# unused variables
+				self.best_video = self.requested_formats[save_order[0]]
+				self.best_audio = self.requested_formats[save_order[1]]
 
 
 	def start_downloading(self) -> None:
@@ -92,6 +92,7 @@ class Video:
 		options = self.options.copy()
 		print(self.output_dir)
 		options['outtmpl'] = (self.output_dir or variables.default_out_dir) + '/' + options['outtmpl']
+		options['format'] = variables.download_format
 
 		# update status
 		self._update_status(self.UI.tree, "B")
@@ -107,13 +108,13 @@ class Video:
 	def get_video_info(self) -> dict:
 		# update the UI
 		self.root.update_idletasks()
-		with yt_dlp.YoutubeDL({'simulate':True, 'format': 'bestaudio+bestvideo'}) as ydl:
+		with yt_dlp.YoutubeDL({'simulate':True, 'format': variables.download_format}) as ydl:
 			return ydl.sanitize_info(ydl.extract_info(self.url))
 
 
 	def _get_total_formats_size(self, formats: list) -> int:
 		total_size = 0
-		for frmt in self.video_info['requested_formats']:
+		for frmt in self.video_info['requested_downloads']:
 			if frmt['format_id'] in formats:
 				total_size += frmt['filesize']
 		return total_size
