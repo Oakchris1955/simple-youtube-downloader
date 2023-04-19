@@ -116,7 +116,7 @@ class Video:
 		total_size = 0
 		for frmt in self.video_info['requested_downloads']:
 			if frmt['format_id'] in formats:
-				total_size += frmt['filesize']
+				total_size += frmt['filesize' if 'filesize' in frmt else 'filesize_approx']
 		return total_size
 			
 
