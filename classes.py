@@ -120,26 +120,31 @@ class Video:
 			
 
 	def _download_progress_hook(self, info: dict):
-		# to begin with, check if currently downloading audio or video (currently unused)
-		if info['info_dict']['fps']:
-			# if audio, save this as a variable
-			current_type = 'audio'
-		else:
-			# else, it is a video
-			current_type = 'video'
+		# first check if property video_info exist in object
+		if not hasattr(self, 'video_info'):
+			return
+		# then check if the info being supplied are what we are looking for by comparing the video IDs (the reason this check exists is because yt-dlp tends to spit out irrelevant info to other progress hooks while simultanously downloading multiple videos)
+		if info['info_dict']['id'] == self.video_info['id']:
+			# then, check if currently downloading audio or video (currently unused)
+			if info['info_dict']['fps']:
+				# if audio, save this as a variable
+				current_type = 'audio'
+			else:
+				# else, it is a video
+				current_type = 'video'
 
-		current_format = info['info_dict']['format_id']
-		if current_format not in [frmt for frmt in self.downloaded_formats]:
-			self.downloaded_formats.append(current_format)
+			current_format = info['info_dict']['format_id']
+			if current_format not in [frmt for frmt in self.downloaded_formats]:
+				self.downloaded_formats.append(current_format)
 
-		if info["status"] == "downloading":
-			# update the downloaded bytes
-			total_downloaded_bytes = self._get_total_formats_size(self.downloaded_formats[:-1])+info['downloaded_bytes']
-			# also, update percent downloaded
-			self.percent = round(total_downloaded_bytes/self.total_size*100, 2)
-		
-		# lastly, update the displayed status
-		self._update_status(self.UI.tree)
+			if info["status"] == "downloading":
+				# update the downloaded bytes
+				total_downloaded_bytes = self._get_total_formats_size(self.downloaded_formats[:-1])+info['downloaded_bytes']
+				# also, update percent downloaded
+				self.percent = round(total_downloaded_bytes/self.total_size*100, 2)
+			
+			# lastly, update the displayed status
+			self._update_status(self.UI.tree)
 
 
 	def _humansize(self, nbytes: int):

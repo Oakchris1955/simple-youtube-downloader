@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog
 import asyncio
+from threading import Thread
 
 import classes
 
@@ -16,23 +17,20 @@ def add_vid_to_queue(url: str, mod: dict, videos: dict) -> None:
 	classes.Video(url, mod)
 
 def start_downloading(videos: list, tree: ttk.Treeview) -> None:
-	# some checks to see if there is anything selected
+	# obtain user selection from video tree
 	selection = tree.selection()
-	if selection:
-		# if it is, save the iid
-		iid = selection[0]
-	else:
-		# else, return early
-		return None
-	# the 5 lines below get the classes.Video object with the matched iid
-	my_vid = None
-	for vid in videos:
-		if vid.iid == iid:
-			my_vid = vid
-			break
-	# if found something, then start downloading
-	if my_vid:
-		my_vid.start_downloading()
+
+	for video_iid in selection:
+		# the 5 lines below get the classes.Video object with the same iid as the user selection
+		my_vid = None
+		for vid in videos:
+			print(vid.iid)
+			if vid.iid == video_iid:
+				my_vid = vid
+				break
+		# if found something, then start downloading it
+		if my_vid:
+			Thread(target=my_vid.start_downloading).start()
 
 def change_download_format(video_format: str):
 	variables.download_format = video_format
