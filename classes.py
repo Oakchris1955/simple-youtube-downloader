@@ -90,7 +90,6 @@ class Video:
 
 		# create a temporary copy of self.options
 		options = self.options.copy()
-		print(self.output_dir)
 		options['outtmpl'] = (self.output_dir or variables.default_out_dir) + '/' + options['outtmpl']
 		options['format'] = variables.download_format
 
