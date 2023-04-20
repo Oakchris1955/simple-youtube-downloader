@@ -34,6 +34,11 @@ def start_downloading(videos: list, tree: ttk.Treeview) -> None:
 
 def change_download_format(video_format: str):
 	variables.download_format = video_format
+	for video in variables.videos:
+		video.video_info = video.get_video_info()
+		video.total_size = video._get_total_formats_size(frmt['format_id'] for frmt in video.video_info['requested_downloads'])
+		video.human_total_size = video._humansize(video.total_size)
+		print(video.total_size)
 
 def change_download_dir():
 	download_location = filedialog.askdirectory()
