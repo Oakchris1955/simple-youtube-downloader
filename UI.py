@@ -20,11 +20,19 @@ optionsmenu.add_command(label="Show download location", command=lambda:tk.messag
 menubar.add_cascade(label="Options", menu=optionsmenu)
 
 formatmenu = tk.Menu(menubar, tearoff=0)
-formatmenu.add_radiobutton(label='Audio only', underline=0, command=lambda:functions.change_download_format("bestaudio"))
-formatmenu.add_radiobutton(label='Video only', underline=0, command=lambda:functions.change_download_format("bestvideo"))
-formatmenu.add_radiobutton(label='Audio and video', underline=0, command=lambda:functions.change_download_format("bestaudio+bestvideo"))
+formatmenu.add_radiobutton(label='Audio only', variable=variables.download_format, underline=0, command=lambda:(functions.change_download_format("bestaudio"), menubar.add_cascade(label="Audio format", menu=audiomenu), audiomenu.invoke('Default')))
+formatmenu.add_radiobutton(label='Video only', variable=variables.download_format, underline=0, command=lambda:(functions.change_download_format("bestvideo"), functions.remove_menu_item("Audio format", menubar)))
+formatmenu.add_radiobutton(label='Audio and video', variable=variables.download_format, underline=0, command=lambda:(functions.change_download_format("bestaudio+bestvideo"), functions.remove_menu_item("Audio format", menubar)))
 formatmenu.invoke('Audio and video')
 menubar.add_cascade(label='Select format', menu=formatmenu)
+
+audiomenu = tk.Menu(menubar, tearoff=0)
+audiomenu.add_radiobutton(label='Default', command=lambda:functions.change_audio_format(None))
+audiomenu.add_radiobutton(label='aac', command=lambda:functions.change_audio_format('acc'))
+audiomenu.add_radiobutton(label='mp3', command=lambda:functions.change_audio_format('mp3'))
+audiomenu.add_radiobutton(label='ogg', command=lambda:functions.change_audio_format('ogg'))
+audiomenu.add_radiobutton(label='wav', command=lambda:functions.change_audio_format('wav'))
+audiomenu.invoke('Default')
 
 root.config(menu=menubar)
 '''

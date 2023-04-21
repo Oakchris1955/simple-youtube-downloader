@@ -32,6 +32,19 @@ def start_downloading(videos: list, tree: ttk.Treeview) -> None:
 		if my_vid:
 			Thread(target=my_vid.start_downloading).start()
 
+def remove_menu_item(label: str, menu: tk.Menu):
+	try:
+		# try checking if label variable is a label of a menu command
+		menu.entrycget(label, "label")
+	except:
+		pass
+	else:
+		# if no error is through, this means that the label exists, so remove it
+		menu.delete(label)
+
+def change_audio_format(audio_format: str or None):
+	variables.audio_format = audio_format
+
 def change_download_format(video_format: str):
 	variables.download_format = video_format
 	for video in variables.videos:

@@ -16,13 +16,15 @@ class Video:
 	default_options = {
 		# downloads folder path
 		'outtmpl': '%(title)s.%(ext)s',
-		'progress_hooks': []
+		'progress_hooks': [],
+		'postprocessor_hooks': []
 	} 
 	status_dict = {
 		"G": "Gathering info...",
 		"Q": "Queued for downloading",
 		"B": "Download initiated and will begin shortly",
 		"D": "Downloaded {percent}% from total of {size}",
+		"P": "Postprocessing with FFmpeg...",
 		"O": "Done"
 	}
 
@@ -38,6 +40,8 @@ class Video:
 
 		# also, add _download_progress_hook to progrss hooks
 		self.options["progress_hooks"].append(self._download_progress_hook)
+		# and _postprocessor_hook to postprocessor hooks
+		self.options["postprocessor_hooks"].append(self._postprocessor_hook)
 
 		# if URL already inputed, quit
 		if self.url in list(vid.url for vid in variables.videos):
@@ -92,6 +96,11 @@ class Video:
 		options = self.options.copy()
 		options['outtmpl'] = (self.output_dir or variables.default_out_dir) + '/' + options['outtmpl']
 		options['format'] = variables.download_format
+		if variables.audio_format != None:
+			options['postprocessors'] = [{  # Extract audio using ffmpeg
+				'key': 'FFmpegExtractAudio',
+				'preferredcodec': variables.audio_format,
+			}]
 
 		# update status
 		self._update_status(self.UI.tree, "B")
@@ -118,6 +127,18 @@ class Video:
 				total_size += frmt['filesize' if 'filesize' in frmt else 'filesize_approx']
 		return total_size
 			
+
+	def _postprocessor_hook(self, info: dict):
+		# the following 4 lines are the same code as the beginning of the _download_progress_hook function
+
+		# first check if property video_info exist in object
+		if not hasattr(self, 'video_info'):
+			return
+		# then check if the info being supplied are what we are looking for by comparing the video IDs (the reason this check exists is because yt-dlp tends to spit out irrelevant info to other postprocessor hooks while simultanously downloading multiple videos)
+		if info['info_dict']['id'] == self.video_info['id']:
+			self.status = "P"
+			self._update_status(self.UI.tree, self.status)
+
 
 	def _download_progress_hook(self, info: dict):
 		# first check if property video_info exist in object
